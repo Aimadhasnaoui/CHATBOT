@@ -2,6 +2,6 @@ import express from 'express'
 import { ResponseLogic } from '../Controllers/Response.controller'
 const router = express.Router()
 
-router.post('/response',ResponseLogic)
+router.post('/',ResponseLogic)
 
 export default router

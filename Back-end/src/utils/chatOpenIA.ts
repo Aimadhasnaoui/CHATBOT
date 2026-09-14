@@ -84,6 +84,18 @@ Rappel : la réponse doit être en {LANG}.`;
 const isLang = (value: unknown): value is Lang =>
   typeof value === "string" && (LANGS as readonly string[]).includes(value);
 
+const TITLE_SYSTEM_PROMPT = `Tu résumes le premier message d'une conversation en un titre court.
+
+RÈGLE ABSOLUE — LANGUE : le titre doit être rédigé entièrement en {LANG}.
+
+Règles strictes :
+- 3 à 6 mots maximum
+- Pas de ponctuation finale, pas de guillemets
+- Pas de préfixe du type "Titre :"
+- Résume le sujet du message, ce n'est pas une réponse
+
+Réponds UNIQUEMENT avec le titre, rien d'autre.`;
+
 
 // src/services/chatbotMatcher.ts (add this to the same file, below matchIntent)
 
@@ -116,6 +128,37 @@ export const generateFallbackReply = async (
 };
 
 
+
+/** Titre court généré à partir du tout premier message d'une conversation. */
+export const generateTitle = async (
+  userMessage: string,
+  lang: Lang,
+): Promise<string> => {
+  const fallbackTitle = userMessage.trim().slice(0, 40);
+  try {
+    const response = await client.chat.completions.create({
+      model: MODEL,
+      messages: [
+        {
+          role: "system",
+          content: TITLE_SYSTEM_PROMPT.replaceAll("{LANG}", LANG_NAMES[lang]),
+        },
+        { role: "user", content: userMessage },
+      ],
+      max_tokens: 32,
+      reasoning_effort: "low",
+      temperature: 0.3,
+    });
+
+    const title = response.choices[0].message.content
+      ?.trim()
+      .replace(/^["'«]+|["'»]+$/g, "");
+    return title || fallbackTitle;
+  } catch (error) {
+    console.error("Groq title generation failed:", error);
+    return fallbackTitle;
+  }
+};
 
 export const matchIntent = async (userMessage: string): Promise<IntentMatch> => {
   try {

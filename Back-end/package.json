@@ -7,6 +7,8 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
+    "@prisma/adapter-libsql": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "dayjs": "^1.11.23",
     "dotenv": "^17.4.2",
