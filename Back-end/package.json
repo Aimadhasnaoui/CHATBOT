@@ -13,8 +13,7 @@
     "dayjs": "^1.11.23",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "fuse.js": "^7.5.0",
-    "openai": "^6.49.0"
+    "fuse.js": "^7.5.0"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",

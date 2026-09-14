@@ -1,5 +1,22 @@
+import { FirstMenu, intents } from './../utils/chatbotIntents';
 import { prisma } from "../config/db.config";
 import { Request, Response } from "express";
+export const CreatConversation = async (req: Request, res: Response)=>{
+  const NewConversation = await prisma.conversation.create({
+    data:{
+       userId: "11", Title: "Nouvelle conversation" ,
+    }
+  })
+  const Messageresponse = intents.find((i) => i.topic === "Intro")
+  res.status(200).json({
+    message:'conversation a été créer avec succès',
+    conversationId:NewConversation?.id,
+    menu:FirstMenu,
+    response:Messageresponse?.response
+  })
+}
+
+
 export const GetConversation = async (req: Request, res: Response) => {
   const AllConversation = await prisma.conversation.findMany({
     orderBy: { startedAt: "desc" },

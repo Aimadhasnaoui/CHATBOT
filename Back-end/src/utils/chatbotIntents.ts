@@ -1,95 +1,48 @@
-export const LANGS = ["fr", "en", "ar"] as const;
-export type Lang = (typeof LANGS)[number];
+export const fallbackResponse =
+  "Désolé, je n'ai pas bien compris votre message. 🤔 Pouvez-vous reformuler, ou choisir une option ci-dessous ?";
 
-export const DEFAULT_LANG: Lang = "fr";
-
-/** Une réponse par langue supportée. */
-export type LocalizedResponse = Record<Lang, string>;
-
-export const fallbackResponse: LocalizedResponse = {
-  fr: "Désolé, je n'ai pas bien compris votre message. 🤔 Pouvez-vous reformuler, ou choisir une option ci-dessous ?",
-  en: "Sorry, I didn't quite understand your message. 🤔 Could you rephrase, or pick an option below?",
-  ar: "عذراً، لم أفهم رسالتك جيداً. 🤔 هل يمكنك إعادة الصياغة، أو اختيار أحد الخيارات أدناه؟",
-};
-
-type Intent = {
+export type Intent = {
   topic: string;
+  label: string;
   phrases: string[];
-  response: LocalizedResponse;
+  response: string;
+  /** Intents "d'accueil" : la réponse est accompagnée du menu d'options. */
+  intro?: boolean;
+  /** Apparaît comme option proposée dans le menu guidé. */
+  menu?: boolean;
 };
+export type Menu ={
+  descepretion:string,
+  topic:string
+}
+
+export const FirstMenu:Menu[] = [
+  {
+    descepretion:'les Données station 📡',
+    topic:'donnestation'
+  },
+  {
+    descepretion:'les Prévisions des station 🌦️',
+    topic:'previsions'
+  }
+]
 
 export const intents: Intent[] = [
   {
     topic: "greeting",
-    phrases: [
-      "bonjour",
-      "salut",
-      "bonsoir",
-      "coucou",
-      "hello",
-      "hi",
-      "bonjour a tous",
-      "salam",
-      "hey",
-      "good morning",
-      "good evening",
-      "مرحبا",
-      "السلام عليكم",
-      "صباح الخير",
-      "مساء الخير",
-      "اهلا",
-    ],
-    response: {
-      fr: "Bonjour ! 👋 Comment puis-je vous aider aujourd'hui ?",
-      en: "Hello! 👋 How can I help you today?",
-      ar: "مرحباً! 👋 كيف يمكنني مساعدتك اليوم؟",
-    },
+    label: "Salutation",
+    phrases: ["bonjour", "salut", "bonsoir", "coucou", "bonjour a tous"],
+    response: "Bonjour ! 👋 Comment puis-je vous aider aujourd'hui ?",
   },
   {
     topic: "thanks",
-    phrases: [
-      "merci",
-      "merci beaucoup",
-      "je vous remercie",
-      "thanks",
-      "thank you",
-      "merci bcp",
-      "thx",
-      "thanks a lot",
-      "شكرا",
-      "شكرا جزيلا",
-      "متشكر",
-    ],
-    response: {
-      fr: "Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions.",
-      en: "You're welcome! 😊 Feel free to ask if you have any other questions.",
-      ar: "على الرحب والسعة! 😊 لا تتردد في طرح أي أسئلة أخرى.",
-    },
+    label: "Remerciement",
+    phrases: ["merci", "merci beaucoup", "je vous remercie", "merci bcp"],
+    response: "Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions.",
   },
   {
-    topic: "small_talk_how_are_you",
-    phrases: [
-      "comment ca va",
-      "ca va",
-      "comment vas tu",
-      "comment allez vous",
-      "tu vas bien",
-      "comment tu vas",
-      "how are you",
-      "how's it going",
-      "how are you doing",
-      "كيف حالك",
-      "كيفك",
-      "شلونك",
-    ],
-    response: {
-      fr: "Je vais très bien, merci ! 😄 Et vous, comment puis-je vous aider aujourd'hui ?",
-      en: "I'm doing great, thanks! 😄 And you — how can I help you today?",
-      ar: "أنا بخير، شكراً لك! 😄 وأنت، كيف يمكنني مساعدتك اليوم؟",
-    },
-  },
-  {
-    topic: "who_are_you",
+    topic: "Intro",
+    label: "Qui es-tu ?",
     phrases: [
       "qui es tu",
       "c'est quoi ce chatbot",
@@ -98,62 +51,64 @@ export const intents: Intent[] = [
       "t'es qui",
       "c'est quoi ton nom",
       "comment tu t'appelles",
-      "who are you",
-      "what is this bot",
-      "what's your name",
-      "من أنت",
-      "ما هذا البوت",
-      "ما اسمك",
     ],
-    response: {
-      fr: "Je suis l'assistant virtuel d'AgroTech 🌱 — je peux vous aider à trouver des infos sur vos stations, prévisions, cumuls et risques de maladies. Comment puis-je vous aider aujourd'hui ?",
-      en: "I'm the AgroTech virtual assistant 🌱 — I can help you find information about your stations, forecasts, accumulations and disease risks. How can I help you today?",
-      ar: "أنا المساعد الافتراضي لـ AgroTech 🌱 — يمكنني مساعدتك في الحصول على معلومات حول محطاتك، التوقعات الجوية، التراكمات ومخاطر الأمراض. كيف يمكنني مساعدتك اليوم؟",
-    },
+    response:
+      "Je suis AgroBot 🌱, votre compagnon agricole — je réponds à vos questions 24h/7j sur l'état de vos stations, les prévisions, Comment puis-je vous aider aujourd'hui ?",
+    intro: true,
   },
   {
-    topic: "what_can_you_do",
+    topic: "donnestation",
+    label: "Données station 📡",
     phrases: [
-      "que peux tu faire",
-      "tu peux faire quoi",
-      "aide",
-      "help",
-      "qu'est ce que tu sais faire",
-      "comment ca marche",
-      "what can you do",
-      "how does this work",
-      "what do you know",
-      "ماذا يمكنك أن تفعل",
-      "مساعدة",
-      "كيف يعمل هذا",
+      "etat de la station",
+      "etat actuel",
+      "donnees de la station",
+      "donnees actuelles",
+      "temperature actuelle",
+      "humidite actuelle",
+      "etat de mes stations",
+      "quelles sont les donnees de ma station",
     ],
-    response: {
-      fr: "Je peux vous renseigner sur : l'état actuel de vos stations, les prévisions météo, les cumuls (degrés-jours), et les risques de maladies. Que voulez-vous savoir ?",
-      en: "I can tell you about: the current state of your stations, weather forecasts, accumulations (degree-days), and disease risks. What would you like to know?",
-      ar: "يمكنني إخبارك عن: الحالة الحالية لمحطاتك، توقعات الطقس، التراكمات (الدرجات اليومية)، ومخاطر الأمراض. ماذا تريد أن تعرف؟",
-    },
+    response:
+      "La consultation des données en direct de vos stations arrive bientôt 📡. Cette section affichera prochainement la température, l'humidité et l'état de chaque station en temps réel.",
+    menu: true,
+  },
+  {
+    topic: "previsions",
+    label: "les Prévisions des station 🌦️",
+    phrases: [
+      "previsions",
+      "previsions meteo",
+      "quel temps demain",
+      "meteo de demain",
+      "quel temps fera t il",
+      "previsions de la semaine",
+      "va t il pleuvoir",
+    ],
+    response:
+      "Les prévisions météo par parcelle arrivent bientôt 🌦️. Cette section affichera prochainement les prévisions des prochains jours pour vos stations.",
+    menu: true,
   },
   {
     topic: "goodbye",
-    phrases: [
-      "au revoir",
-      "bye",
-      "a bientot",
-      "a plus",
-      "bonne journee",
-      "je m'en vais",
-      "ciao",
-      "goodbye",
-      "see you",
-      "bye bye",
-      "مع السلامة",
-      "إلى اللقاء",
-      "وداعا",
-    ],
-    response: {
-      fr: "Au revoir ! 👋 N'hésitez pas à revenir si vous avez besoin d'aide.",
-      en: "Goodbye! 👋 Feel free to come back if you need any help.",
-      ar: "إلى اللقاء! 👋 لا تتردد في العودة إذا احتجت إلى أي مساعدة.",
-    },
+    label: "Au revoir",
+    phrases: ["au revoir", "a bientot", "a plus", "bonne journee", "je m'en vais", "ciao"],
+    response: "Au revoir ! 👋 N'hésitez pas à revenir si vous avez besoin d'aide.",
   },
 ];
+
+/** Une option de menu proposée à l'utilisateur pour guider la conversation. */
+export type MenuOption = { topic: string; label: string };
+
+/** Bouton joint à une réponse d'accueil ou de secours : révèle le menu d'options. */
+export type SuggestedAction = { label: string; options: MenuOption[] };
+
+export const MENU_ACTION_LABEL = "Voir les options";
+
+export const getMenuOptions = (): MenuOption[] =>
+  intents
+    .filter((intent) => intent.menu)
+    .map((intent) => ({ topic: intent.topic, label: intent.label }));
+
+/** Le menu proposé à l'utilisateur dès la création d'une conversation. */
+// export const FirstMenu: MenuOption[] = getMenuOptions();

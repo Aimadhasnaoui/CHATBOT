@@ -1,24 +1,26 @@
-import Fuse from 'fuse.js'
-import {intents} from './chatbotIntents'
+import Fuse from "fuse.js";
+import { intents } from "./chatbotIntents";
 
-const fuse = new Fuse(intents, {
-  keys: ['phrases'],
+type PhraseEntry = { topic: string; phrase: string };
+
+const corpus: PhraseEntry[] = intents.flatMap((intent) =>
+  intent.phrases.map((phrase) => ({ topic: intent.topic, phrase })),
+);
+
+const fuse = new Fuse(corpus, {
+  keys: ["phrase"],
   threshold: 0.4,
   includeScore: true,
-  ignoreLocation: true
-})
+  ignoreLocation: true,
+});
 
-export const matchIntent = (userMessage: string) => {
-  const normalized = userMessage
+const normalize = (text: string) =>
+  text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[̀-ͯ]/g, "");
 
-  const results = fuse.search(normalized);
-
-  if (results.length > 0) {
-    return results[0].item; 
-  }
-  return null;
+export const matchIntent = (userMessage: string): string | null => {
+  const results = fuse.search(normalize(userMessage));
+  return results.length > 0 ? results[0].item.topic : null;
 };
-
