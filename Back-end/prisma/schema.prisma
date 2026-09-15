@@ -29,5 +29,6 @@ model Exchange {
   topic     String?
   lang      String?  // "fr" | "en" | "ar"
   matched   Boolean  @default(false)
+  menu      Json?    // menu d'options proposé avec la réponse
   createdAt DateTime @default(now())
 }

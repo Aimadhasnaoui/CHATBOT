@@ -8,7 +8,7 @@ const corpus: PhraseEntry[] = intents.flatMap((intent) =>
 );
 
 const fuse = new Fuse(corpus, {
-  keys: ["phrase"],
+  keys: ["topic"],
   threshold: 0.4,
   includeScore: true,
   ignoreLocation: true,

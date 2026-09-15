@@ -9,7 +9,7 @@ export type Intent = {
   /** Intents "d'accueil" : la réponse est accompagnée du menu d'options. */
   intro?: boolean;
   /** Apparaît comme option proposée dans le menu guidé. */
-  menu?: boolean;
+  menu?:object |object[];
 };
 export type Menu ={
   descepretion:string,
@@ -55,6 +55,7 @@ export const intents: Intent[] = [
     response:
       "Je suis AgroBot 🌱, votre compagnon agricole — je réponds à vos questions 24h/7j sur l'état de vos stations, les prévisions, Comment puis-je vous aider aujourd'hui ?",
     intro: true,
+    menu:FirstMenu
   },
   {
     topic: "donnestation",
@@ -70,8 +71,7 @@ export const intents: Intent[] = [
       "quelles sont les donnees de ma station",
     ],
     response:
-      "La consultation des données en direct de vos stations arrive bientôt 📡. Cette section affichera prochainement la température, l'humidité et l'état de chaque station en temps réel.",
-    menu: true,
+      "Veuillez sélectionner votre station, le pas de mesure, le paramètre souhaité et la période (du ... au ...) dans le formulaire ci-dessous 📡.",
   },
   {
     topic: "previsions",
@@ -87,7 +87,6 @@ export const intents: Intent[] = [
     ],
     response:
       "Les prévisions météo par parcelle arrivent bientôt 🌦️. Cette section affichera prochainement les prévisions des prochains jours pour vos stations.",
-    menu: true,
   },
   {
     topic: "goodbye",
@@ -96,19 +95,3 @@ export const intents: Intent[] = [
     response: "Au revoir ! 👋 N'hésitez pas à revenir si vous avez besoin d'aide.",
   },
 ];
-
-/** Une option de menu proposée à l'utilisateur pour guider la conversation. */
-export type MenuOption = { topic: string; label: string };
-
-/** Bouton joint à une réponse d'accueil ou de secours : révèle le menu d'options. */
-export type SuggestedAction = { label: string; options: MenuOption[] };
-
-export const MENU_ACTION_LABEL = "Voir les options";
-
-export const getMenuOptions = (): MenuOption[] =>
-  intents
-    .filter((intent) => intent.menu)
-    .map((intent) => ({ topic: intent.topic, label: intent.label }));
-
-/** Le menu proposé à l'utilisateur dès la création d'une conversation. */
-// export const FirstMenu: MenuOption[] = getMenuOptions();

@@ -8,10 +8,11 @@ export const CreatConversation = async (req: Request, res: Response)=>{
     }
   })
   const Messageresponse = intents.find((i) => i.topic === "Intro")
+
   res.status(200).json({
     message:'conversation a été créer avec succès',
     conversationId:NewConversation?.id,
-    menu:FirstMenu,
+    menu:Messageresponse?.menu,
     response:Messageresponse?.response
   })
 }
